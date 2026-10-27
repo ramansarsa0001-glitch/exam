@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>exam.sofsutra.online | Online CBT Exam Portal (1 Hr & 2 Hr Exams)</title>
+
+<!-- GOOGLE ADSENSE / GAM SCRIPT (Apna Publisher ID ca-pub-XXXX yahan dalein) -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script> -->
+
+<style>
+  :root {
+    --primary: #0f172a; --primary-dark: #020617; --secondary: #2563eb;
+    --accent: #d97706; --danger: #dc2626; --success: #16a34a;
+    --bg-light: #f1f5f9; --border-color: #cbd5e1; --text-main: #1e293b; --text-muted: #475569;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Roboto, "Noto Sans", sans-serif; }
+  body { background-color: var(--bg-light); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; user-select: none; }
+
+  /* HEADER */
+  header { background: var(--primary); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.25); z-index: 10; }
+  .brand-box { display: flex; align-items: center; gap: 12px; }
+  .brand-logo { background: var(--secondary); color: white; font-weight: 900; padding: 6px 10px; border-radius: 6px; font-size: 16px; letter-spacing: 0.5px; }
+  .exam-title-box h1 { font-size: 17px; font-weight: 700; }
+  .exam-title-box p { font-size: 12px; color: #94a3b8; }
+
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .user-badge { background: #1e293b; color: #f8fafc; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; border: 1px solid #334155; }
+  .timer-card { background: #1e293b; color: #38bdf8; padding: 6px 14px; border-radius: 6px; display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 19px; font-family: monospace; border: 1px solid #334155; }
+  .timer-card.danger { color: #f87171; border-color: #f87171; animation: pulse 1s infinite; }
+  @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+  /*GOOGLE AD CONTAINERS*/
+  .ad-slot-banner { background: #f8fafc; border: 1px dashed #94a3b8; border-radius: 6px; padding: 8px 12px; margin-bottom: 14px; text-align: center; min-height: 75px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+  .ad-badge { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; background: #e2e8f0; padding: 2px 6px; border-radius: 3px; position: absolute; top: 4px; right: 6px; }
+  .ad-content-mock { font-size: 13.5px; font-weight: 600; color: #334155; }
+
+  /* PORTAL OVERLAY (LOGIN + DASHBOARD) */
+  .portal-overlay { position: fixed; inset: 0; background: #0f172a; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 15px; overflow-y: auto; }
+  .portal-card { background: #ffffff; width: 100%; max-width: 1020px; border-radius: 12px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); display: flex; flex-direction: column; max-height: 94vh; }
+  .portal-header { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: white; padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .portal-header h2 { font-size: 20px; font-weight: 800; }
+  .portal-header p { font-size: 12.5px; color: #cbd5e1; margin-top: 2px; }
+  .portal-body { padding: 22px 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+
+  /* LOGIN BOX */
+  .login-box { max-width: 440px; margin: 30px auto; background: #f8fafc; padding: 28px; border-radius: 12px; border: 1.5px solid var(--border-color); text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+  .login-box h3 { font-size: 20px; color: var(--primary); margin-bottom: 8px; }
+  .login-box p { font-size: 13.5px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
+  .phone-input { width: 100%; padding: 13px 15px; font-size: 18px; font-weight: 700; text-align: center; letter-spacing: 2px; border: 2px solid #94a3b8; border-radius: 8px; margin-bottom: 15px; outline: none; }
+  .phone-input:focus { border-color: var(--secondary); background: #eff6ff; }
+
+  /* EXAM CATEGORY TABS (1 HR vs 2 HR) */
+  .exam-cat-tabs { display: flex; gap: 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; }
+  .cat-tab { flex: 1; padding: 14px; border-radius: 8px; border: 2px solid #cbd5e1; background: #f8fafc; cursor: pointer; text-align: center; font-weight: 700; font-size: 15px; color: var(--text-main); transition: 0.2s; }
+  .cat-tab.active { border-color: var(--secondary); background: #eff6ff; color: var(--secondary); }
+
+  /* STATS & ATTENDANCE CALENDAR */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .stat-card { background: #f8fafc; padding: 12px 15px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; }
+  .stat-card h4 { font-size: 22px; font-weight: 800; }
+  .stat-card p { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+
+  .calendar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 12px; max-height: 330px; overflow-y: auto; padding: 4px; }
+  .day-card { border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px; background: white; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; transition: 0.15s; }
+  .day-card.today { border: 2px solid var(--secondary); background: #eff6ff; }
+  .day-card.present { border-color: #86efac; background: #f0fdf4; }
+  .day-card.missed { border-color: #fecaca; background: #fef2f2; opacity: 0.85; }
+  .day-card.upcoming { background: #f8fafc; opacity: 0.7; }
+  .day-head { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 14px; }
+  .day-date { font-size: 11.5px; color: var(--text-muted); }
+  .day-status { font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 4px; display: inline-block; text-align: center; }
+
+  /* CBT MAIN VIEW */
+  .cbt-container { display: flex; flex: 1; overflow: hidden; }
+  .question-pane { flex: 1; display: flex; flex-direction: column; background: #ffffff; border-right: 1px solid var(--border-color); }
+  .section-nav { display: flex; background: #e2e8f0; border-bottom: 2px solid #cbd5e1; overflow-x: auto; }
+  .sec-tab { padding: 11px 16px; font-size: 13.5px; font-weight: 600; border: none; background: transparent; cursor: pointer; white-space: nowrap; color: var(--text-muted); border-bottom: 3px solid transparent; }
+  .sec-tab.active { color: var(--secondary); background: #ffffff; border-bottom: 3px solid var(--secondary); font-weight: 700; }
+
+  .question-content-box { flex: 1; padding: 18px 25px; overflow-y: auto; font-size: 16px; }
+  .q-header-meta { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; margin-bottom: 15px; }
+  .q-number-tag { font-size: 16.5px; font-weight: 700; color: var(--secondary); }
+  .marks-info { font-size: 13.5px; color: var(--text-muted); }
+  .marks-info span.pos { color: var(--success); font-weight: bold; }
+  .marks-info span.neg { color: var(--danger); font-weight: bold; }
+
+  .question-body { font-size: 16.5px; line-height: 1.55; color: #0f172a; margin-bottom: 18px; font-weight: 600; }
+  .options-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .option-label { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1.5px solid #cbd5e1; border-radius: 8px; cursor: pointer; background: #f8fafc; font-size: 15px; }
+  .option-label:hover { background: #eff6ff; border-color: #93c5fd; }
+  .option-label input[type="radio"] { accent-color: var(--secondary); width: 18px; height: 18px; cursor: pointer; }
+  .option-label.selected { background: #eff6ff; border-color: var(--secondary); font-weight: 600; }
+
+  .time-tracker-box { background: #e0f2fe; border-left: 4px solid #0284c7; padding: 12px 16px; margin-top: 15px; border-radius: 6px; font-size: 14.5px; font-weight: 600; color: #0369a1; }
+  .review-box { background: #f0fdf4; border-left: 4px solid #16a34a; padding: 14px; margin-top: 12px; border-radius: 6px; font-size: 14.5px; line-height: 1.6; color: #166534; }
+  .trick-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 14px; margin-top: 12px; border-radius: 6px; font-size: 14.5px; line-height: 1.6; color: #92400e; }
+
+  .q-footer-actions { padding: 12px 25px; background: #f8fafc; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+  .btn { padding: 9px 18px; font-size: 13.5px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
+  .btn-outline { background: #fff; border-color: #cbd5e1; color: #334155; }
+  .btn-outline:hover { background: #f1f5f9; }
+  .btn-mark { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+  .btn-save { background: var(--success); color: #fff; }
+  .btn-primary { background: var(--secondary); color: #fff; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-submit { background: var(--danger); color: #fff; font-weight: 700; width: 100%; padding: 13px; font-size: 14.5px; border: none; }
+  .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; opacity: 0.7; }
+
+  .sidebar-pane { width: 340px; background: #f8fafc; display: flex; flex-direction: column; }
+  .legend-box { padding: 12px 15px; background: #ffffff; border-bottom: 1px solid var(--border-color); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .badge-icon { width: 20px; height: 20px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 10.5px; color: white; }
+  .b-answered { background: var(--success); }
+  .b-not-answered { background: var(--danger); }
+  .b-not-visited { background: #e2e8f0; color: #475569; }
+  .b-marked { background: var(--accent); }
+
+  .palette-scroll { flex: 1; padding: 12px 15px; overflow-y: auto; }
+  .question-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .pal-btn { width: 100%; aspect-ratio: 1; border-radius: 6px; font-size: 13px; font-weight: 700; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .pal-btn.current { box-shadow: 0 0 0 2px var(--secondary); font-weight: 900; }
+  .pal-btn.answered { background: var(--success); color: white; border-color: var(--success); }
+  .pal-btn.not-answered { background: var(--danger); color: white; border-color: var(--danger); }
+  .pal-btn.marked { background: var(--accent); color: white; border-color: var(--accent); }
+  .pal-btn.marked-answered { background: #8b5cf6; color: white; border-color: #8b5cf6; }
+
+  .sidebar-bottom { padding: 12px 15px; background: #ffffff; border-top: 1px solid var(--border-color); }
+  #submitUnlockMsg { font-size: 12.5px; font-weight: 700; text-align: center; margin-bottom: 8px; padding: 8px; border-radius: 6px; background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 250; }
+  .modal-card { background: #ffffff; width: 90%; max-width: 620px; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+  .modal-header { background: var(--primary); color: #fff; padding: 18px; font-size: 19px; font-weight: 700; text-align: center; }
+  .modal-body { padding: 22px; }
+  .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+  .sc-box { padding: 14px; border-radius: 8px; text-align: center; background: #f8fafc; border: 1px solid #e2e8f0; }
+  .sc-box h3 { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+  .sc-box p { font-size: 13px; color: var(--text-muted); }
+  .penalty-alert { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 600; font-size: 13.5px; text-align: center; display: none; }
+  .final-score { background: #ecfdf5; border: 2px solid #34d399; color: #065f46; padding: 14px; border-radius: 8px; text-align: center; margin-bottom: 18px; }
+  .final-score h2 { font-size: 32px; font-weight: 900; }
+
+  @media (max-width: 850px) {
+    .cbt-container { flex-direction: column; }
+    .sidebar-pane { width: 100%; height: 250px; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body oncontextmenu="return false;">
+
+<!-- ====================================================================== -->
+<!-- PORTAL OVERLAY: PHONE LOGIN + 1HR/2HR TABS + 30-DAY ATTENDANCE LOCK -->
+<!-- ====================================================================== -->
+<div class="portal-overlay" id="portalOverlay">
+  <div class="portal-card">
+    <div class="portal-header">
+      <div>
+        <h2>🌐 exam.sofsutra.online</h2>
+        <p>Official Daily CBT Test Series | Direct Mobile Number Login (No OTP)</p>
+      </div>
+      <div id="loggedUserHeader" style="display:none; align-items:center; gap:12px;">
+        <span id="loggedPhoneBadge" style="background:#1e293b; padding:6px 12px; border-radius:6px; font-weight:700; font-size:13.5px; border:1px solid #475569;">📱 +91-XXXXXXXXXX</span>
+        <button class="btn btn-danger" style="padding:6px 14px; font-size:12.5px;" onclick="logoutPhoneUser()">🚪 Logout</button>
+      </div>
+    </div>
+
+    <div class="portal-body">
+      <!-- VIEW 1: LOGIN SCREEN (Shown only when logged out) -->
+      <div id="loginView" class="login-box" style="display:none;">
+        <h3>📱 Student Login</h3>
+        <p>Apna 10-digit Mobile Number darj karein. Bina OTP ke aapki Unique ID login ho jayegi aur jab tak aap Logout nahi karenge, isi browser me login rahegi.</p>
+        <input type="tel" id="phoneInput" class="phone-input" maxlength="10" placeholder="Enter 10-Digit Mobile No." oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        <button class="btn btn-primary" style="width:100%; padding:13px; font-size:16px; font-weight:700;" onclick="loginWithPhone()">🔓 Login & Open Dashboard</button>
+      </div>
+
+      <!-- VIEW 2: STUDENT DASHBOARD (Shown when logged in) -->
+      <div id="dashboardView" style="display:none; flex-direction:column; gap:18px;">
+        <!-- 1 Hour vs 2 Hour Exam Navigation -->
+        <div class="exam-cat-tabs">
+          <div class="cat-tab active" id="tab1Hr" onclick="switchExamCategory('1hr')">
+            ⏱️ 1 Hour Exam (60 Questions)
+            <div style="font-size:12px; font-weight:500; margin-top:3px;">40 Min & 40 Qs Submit Lock | Coaching Tricks</div>
+          </div>
+          <div class="cat-tab" id="tab2Hr" onclick="switchExamCategory('2hr')">
+            ⏳ 2 Hour Exam (120 Questions)
+            <div style="font-size:12px; font-weight:500; margin-top:3px;">Dedicated 2-Hour Marathon Section</div>
+          </div>
+        </div>
+
+        <!-- 1 HOUR EXAM SECTION -->
+        <div id="section1Hr" style="display:flex; flex-direction:column; gap:16px;">
+          <div class="stats-row">
+            <div class="stat-card">
+              <h4 id="statAssignedSet" style="color:var(--secondary);">Set A</h4>
+              <p>Assigned Question Set</p>
+            </div>
+            <div class="stat-card">
+              <h4 id="statPresentCount" style="color:var(--success);">0</h4>
+              <p>Tests Given (Present)</p>
+            </div>
+            <div class="stat-card">
+              <h4 id="statMissedCount" style="color:var(--danger);">0</h4>
+              <p>Tests Missed (Locked)</p>
+            </div>
+            <div class="stat-card">
+              <h4 id="statCurrentDay" style="color:var(--accent);">Day 1</h4>
+              <p>Today's Active Test</p>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <h3 style="font-size:15.5px; color:var(--primary);">📅 Your 30-Day Exam Attendance & Schedule (Missed Exam Dobara Nahi De Sakte):</h3>
+            <span style="font-size:12px; color:#64748b;">*Har naye din ka test raat 12:00 AM par unlock hota hai.</span>
+          </div>
+
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+
+        <!-- 2 HOUR EXAM SECTION (Separate Page/View as requested) -->
+        <div id="section2Hr" style="display:none; padding:35px; text-align:center; background:#f8fafc; border-radius:10px; border:1.5px dashed #94a3b8;">
+          <h3 style="font-size:20px; color:var(--primary); margin-bottom:8px;">⏳ 2 Hour Exam Portal (120 Questions)</h3>
+          <p style="font-size:14px; color:var(--text-muted); max-width:550px; margin:0 auto 18px; line-height:1.6;">
+            Yeh 2 Hour Exam ka alag section hai. Jab aap 2 Hour Exam ke questions add karenge, toh wo yahan bilkul alag schedule aur attendance ke sath chalega.
+          </p>
+          <button class="btn btn-outline" onclick="switchExamCategory('1hr')">⬅️ Back to 1 Hour Exam</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- MAIN CBT EXAM INTERFACE -->
+<!-- ====================================================================== -->
+<header>
+  <div class="brand-box">
+    <div class="brand-logo">SOFSUTRA</div>
+    <div class="exam-title-box">
+      <h1 id="examHeaderTitle">exam.sofsutra.online — 1 Hour CBT</h1>
+      <p id="examSubTitle">Min 40 Qs & 40 Mins Submit Lock | Live Ad Refresh Active</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="returnToPortal()">🏠 Dashboard</button>
+    <div class="user-badge" id="activeUserBadge">📱 User</div>
+    <div class="timer-card" id="timerBox">
+      ⏱️ <span id="timeDisplay">01:00:00</span>
+    </div>
+  </div>
+</header>
+
+<div class="cbt-container">
+  <div class="question-pane">
+    <div class="section-nav" id="sectionTabs"></div>
+    <div class="question-content-box">
+
+      <!-- TOP GOOGLE AD SLOT (Refreshes on every new question) -->
+      <div class="ad-slot-banner" id="topAdSlot">
+        <span class="ad-badge">Sponsored Google Ad</span>
+        <div class="ad-content-mock" id="topAdInner">Loading Google Ad Unit #1...</div>
+      </div>
+
+      <div class="q-header-meta">
+        <span class="q-number-tag" id="qNumberText">Question No. 1</span>
+        <div class="marks-info">Marks: <span class="pos">+2.00</span> | Neg: <span class="neg">-0.50</span></div>
+      </div>
+      <div class="question-body" id="qBody"></div>
+      <div class="options-wrapper" id="optionsBox"></div>
+
+      <!-- BOTTOM GOOGLE AD SLOT (Refreshes on every new question) -->
+      <div class="ad-slot-banner" id="bottomAdSlot">
+        <span class="ad-badge">Sponsored Google Ad</span>
+        <div class="ad-content-mock" id="bottomAdInner">Loading Google Ad Unit #2...</div>
+      </div>
+
+      <div id="reviewContainer"></div>
+    </div>
+
+    <div class="q-footer-actions" id="actionFooter">
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-mark" onclick="markForReview()">Mark for Review & Next</button>
+        <button class="btn btn-outline" onclick="clearResponse()">Clear Response</button>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-outline" id="prevBtn" onclick="navigateQuestion(-1)">Previous</button>
+        <button class="btn btn-save" onclick="saveAndNext()">Save & Next</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-pane">
+    <div class="legend-box">
+      <div class="legend-item"><span class="badge-icon b-answered">✓</span> Answered</div>
+      <div class="legend-item"><span class="badge-icon b-not-answered">✗</span> Not Answered</div>
+      <div class="legend-item"><span class="badge-icon b-not-visited">○</span> Not Visited</div>
+      <div class="legend-item"><span class="badge-icon b-marked">★</span> Marked</div>
+    </div>
+    <div class="palette-scroll">
+      <div class="question-grid" id="paletteGrid"></div>
+
+      <!-- SIDEBAR GOOGLE AD SLOT (Refreshes on every new question) -->
+      <div class="ad-slot-banner" style="margin-top:14px; min-height:110px;" id="sideAdSlot">
+        <span class="ad-badge">Google Display Ad</span>
+        <div class="ad-content-mock" id="sideAdInner">Loading Sidebar Ad...</div>
+      </div>
+    </div>
+    <div class="sidebar-bottom">
+      <div id="submitUnlockMsg">🔒 Submit Locked: 40 Qs & 40 Min</div>
+      <button class="btn btn-submit" id="submitBtn" onclick="confirmSubmit()" disabled>SUBMIT FINAL EXAM</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCORECARD MODAL -->
+<div class="modal-overlay" id="resultModal">
+  <div class="modal-card">
+    <div class="modal-header" id="scoreModalTitle">Exam Final Scorecard</div>
+    <div class="modal-body">
+      <div class="penalty-alert" id="penaltyAlert">
+        ⚠️ Cheat Penalty: Tab switched <span id="cheatCountDisplay">0</span> times. <br>
+        <span id="penaltyMarksDisplay">0</span> marks deducted!
+      </div>
+      <div class="score-grid">
+        <div class="sc-box">
+          <h3 id="corrCount" style="color:var(--success);">0</h3>
+          <p>Correct (x 2.0)</p>
+        </div>
+        <div class="sc-box">
+          <h3 id="wrongCount" style="color:var(--danger);">0</h3>
+          <p>Incorrect (x -0.5)</p>
+        </div>
+      </div>
+      <div class="final-score">
+        <p style="font-weight:600; margin-bottom:5px;" id="submittedTimeLabel">Net Final Score (Out of 120)</p>
+        <h2 id="finalScoreVal">0.00</h2>
+      </div>
+      <div style="display:flex; gap:15px; justify-content:center; margin-top:10px;">
+        <button class="btn btn-outline" style="flex:1;" onclick="returnToPortal()">🏠 Back to Dashboard</button>
+        <button class="btn btn-save" style="flex:1;" onclick="reviewQuestions()">🔍 Check Answers, Time & Tricks</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// 1. CLOUD SYNC CONFIGURATION (FOR CROSS-BROWSER PHONE LOGIN WITHOUT OTP)
+// Agar aap apna Firebase Realtime Database URL yahan dalenge (jaise "https://your-project-default-rtdb.firebaseio.com"),
+// toh naye browser me bhi exact same phone number dalte hi pura record sync ho jayega!
+// ============================================================================
+const CLOUD_DB_URL = ""; // Optional: Paste Firebase Realtime DB URL here
+
+async function syncUserToCloud(phone, profileData) {
+  localStorage.setItem(`sofsutra_user_${phone}`, JSON.stringify(profileData));
+  if (!CLOUD_DB_URL) return;
+  try {
+    await fetch(`${CLOUD_DB_URL}/users/${phone}.json`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(profileData)
+    });
+  } catch (e) {
+    console.warn("Cloud sync skipped (using local storage)");
+  }
+}
+
+async function fetchUserFromCloud(phone) {
+  if (CLOUD_DB_URL) {
+    try {
+      const res = await fetch(`${CLOUD_DB_URL}/users/${phone}.json`);
+      if (res.ok) {
+        const cloudData = await res.json();
+        if (cloudData) {
+          localStorage.setItem(`sofsutra_user_${phone}`, JSON.stringify(cloudData));
+          return cloudData;
+        }
+      }
+    } catch (e) {
+      console.warn("Cloud fetch fallback to local");
+    }
+  }
+  const localRaw = localStorage.getItem(`sofsutra_user_${phone}`);
+  return localRaw ? JSON.parse(localRaw) : null;
+}
+
+// ============================================================================
+// 2. GOOGLE AD REFRESH ENGINE (NEW AD ON EVERY QUESTION CHANGE)
+// ============================================================================
+let adImpressionCounter = 0;
+
+function refreshGoogleAdOnQuestionChange(qNum) {
+  adImpressionCounter++;
+  const ts = new Date().toLocaleTimeString('en-IN');
+
+  // Update visual ad slots & re-trigger AdSense / GPT push
+  const topSlot = document.getElementById("topAdInner");
+  const bottomSlot = document.getElementById("bottomAdInner");
+  const sideSlot = document.getElementById("sideAdInner");
+
+  if (topSlot && bottomSlot && sideSlot) {
+    topSlot.innerHTML = `📢 <b>Google Ad Banner #1 (Q.${qNum})</b> — Impression #${adImpressionCounter} (${ts})
+      <!-- Jab AdSense approve ho jaye, apna <ins class="adsbygoogle"> code yahan dalein -->`;
+    bottomSlot.innerHTML = `📢 <b>Google Ad Banner #2 (Q.${qNum})</b> — Impression #${adImpressionCounter} (${ts})`;
+    sideSlot.innerHTML = `📢 <b>Sidebar Ad Unit (Q.${qNum})</b><br><span style="font-size:12px; color:#64748b;">Auto-Refreshed on Question Change</span>`;
+  }
+
+  // Trigger real Google AdSense / GPT refresh if script is active on exam.sofsutra.online
+  try {
+    if (window.adsbygoogle && Array.isArray(window.adsbygoogle)) {
+      // Push new ad request
+      // (window.adsbygoogle = window.adsbygoogle || []).push({});
+    }
+    if (window.googletag && window.googletag.pubads) {
+      window.googletag.pubads().refresh();
+    }
+  } catch (err) {
+    console.log("Ad refresh triggered");
+  }
+}
+
+// ============================================================================
+// 3. PHONE NUMBER AUTHENTICATION & USER SLOT MAPPING (USERS 1-6 LOGIC)
+// ============================================================================
+let currentPhone = null;
+let currentUserProfile = null;
+let activeUserSlot = 1; // 1 to 6 mapping based on phone number
+let activeSetNum = 1;   // 1 (Set A), 2 (Set B), 3 (Set C)
+let activeDay = 1;
+
+function getSlotFromPhone(phoneStr) {
+  // Deterministic mapping: Har phone number ko 1 se 6 ke beech ek fix slot milta hai
+  let sum = 0;
+  for (let i = 0; i < phoneStr.length; i++) {
+    sum = (sum * 31 + phoneStr.charCodeAt(i)) % 100000;
+  }
+  return (sum % 6) + 1; // Returns 1, 2, 3, 4, 5, or 6
+}
+
+function getTodayDateString() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function calculateDayNumber(startDateStr, targetDateStr) {
+  const d1 = new Date(startDateStr + "T00:00:00");
+  const d2 = new Date(targetDateStr + "T00:00:00");
+  const diffDays = Math.floor((d2 - d1) / (1000 * 60 * 60 * 24));
+  return diffDays + 1; // Day 1 is start date
+}
+
+function addDaysToDateString(startDateStr, daysToAdd) {
+  const d = new Date(startDateStr + "T00:00:00");
+  d.setDate(d.getDate() + daysToAdd);
+  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+async function initPortal() {
+  setupSilentAntiCheat();
+  const savedPhone = localStorage.getItem("sofsutra_active_phone");
+  if (savedPhone && savedPhone.length === 10) {
+    document.getElementById("phoneInput").value = savedPhone;
+    await loginWithPhone(savedPhone);
+  } else {
+    showLoginScreen();
+  }
+}
+
+function showLoginScreen() {
+  document.getElementById("portalOverlay").style.display = "flex";
+  document.getElementById("loginView").style.display = "block";
+  document.getElementById("dashboardView").style.display = "none";
+  document.getElementById("loggedUserHeader").style.display = "none";
+}
+
+async function loginWithPhone(passedPhone = null) {
+  const phoneInput = passedPhone || document.getElementById("phoneInput").value.trim();
+  if (!/^\d{10}$/.test(phoneInput)) {
+    alert("Kripya sahi 10-digit Mobile Number darj karein!");
+    return;
+  }
+
+  currentPhone = phoneInput;
+  // Save active phone so user stays logged in until explicit Logout
+  localStorage.setItem("sofsutra_active_phone", currentPhone);
+
+  let profile = await fetchUserFromCloud(currentPhone);
+  if (!profile) {
+    // Create new profile tied to this phone number
+    profile = {
+      phone: currentPhone,
+      joinDate: getTodayDateString(), // Day 1 starts on the day user first registers/series starts
+      slot: getSlotFromPhone(currentPhone),
+      daysRecord: {} // Stores state per day (1..30)
+    };
+    await syncUserToCloud(currentPhone, profile);
+  }
+
+  currentUserProfile = profile;
+  activeUserSlot = profile.slot || getSlotFromPhone(currentPhone);
+  activeSetNum = ((activeUserSlot - 1) % 3) + 1;
+
+  // Show Dashboard
+  document.getElementById("loginView").style.display = "none";
+  document.getElementById("dashboardView").style.display = "flex";
+  document.getElementById("loggedUserHeader").style.display = "flex";
+  document.getElementById("loggedPhoneBadge").innerText = `📱 +91-${currentPhone} (Slot #${activeUserSlot})`;
+
+  renderAttendanceDashboard();
+}
+
+function logoutPhoneUser() {
+  if (timerInterval) clearInterval(timerInterval);
+  localStorage.removeItem("sofsutra_active_phone");
+  currentPhone = null;
+  currentUserProfile = null;
+  document.getElementById("phoneInput").value = "";
+  showLoginScreen();
+}
+
+function switchExamCategory(cat) {
+  if (cat === '1hr') {
+    document.getElementById("tab1Hr").classList.add("active");
+    document.getElementById("tab2Hr").classList.remove("active");
+    document.getElementById("section1Hr").style.display = "flex";
+    document.getElementById("section2Hr").style.display = "none";
+  } else {
+    document.getElementById("tab2Hr").classList.add("active");
+    document.getElementById("tab1Hr").classList.remove("active");
+    document.getElementById("section2Hr").style.display = "block";
+    document.getElementById("section1Hr").style.display = "none";
+  }
+}
+
+// ============================================================================
+// 4. 30-DAY ATTENDANCE & MISSED EXAM LOCK ENGINE
+// ============================================================================
+function renderAttendanceDashboard() {
+  const todayStr = getTodayDateString();
+  const currentDayNum = calculateDayNumber(currentUserProfile.joinDate, todayStr);
+
+  const setChar = String.fromCharCode(64 + activeSetNum);
+  const orderDesc = activeUserSlot <= 3 ? "Original Order" : `Shuffled Order (User ${activeSetNum} Base)`;
+  document.getElementById("statAssignedSet").innerText = `Set ${setChar} (${orderDesc})`;
+  document.getElementById("statCurrentDay").innerText = `Day ${Math.min(30, Math.max(1, currentDayNum))}`;
+
+  let presentCount = 0;
+  let missedCount = 0;
+  const grid = document.getElementById("calendarGrid");
+  grid.innerHTML = "";
+
+  for (let d = 1; d <= 30; d++) {
+    const dayDateLabel = addDaysToDateString(currentUserProfile.joinDate, d - 1);
+    const rec = currentUserProfile.daysRecord[d];
+    const isSubmitted = rec && rec.isExamSubmitted;
+
+    const card = document.createElement("div");
+
+    if (d < currentDayNum) {
+      // PAST DAY: Either Present (Submitted) or Missed (Permanently Locked!)
+      if (isSubmitted) {
+        presentCount++;
+        card.className = "day-card present";
+        card.innerHTML = `
+          <div>
+            <div class="day-head"><span>Day ${d}</span><span style="color:var(--success);">✓ Present</span></div>
+            <div class="day-date">${dayDateLabel}</div>
+          </div>
+          <div style="font-size:13px; font-weight:700; color:#166534;">Score: ${rec.scoreSummary.finalScore} / 120</div>
+          <button class="btn btn-save" style="width:100%; padding:7px; font-size:12px;" onclick="launchDayExam(${d})">🔍 View Result & Tricks</button>
+        `;
+      } else {
+        missedCount++;
+        card.className = "day-card missed";
+        card.innerHTML = `
+          <div>
+            <div class="day-head"><span>Day ${d}</span><span style="color:var(--danger);">✗ Missed</span></div>
+            <div class="day-date">${dayDateLabel}</div>
+          </div>
+          <div class="day-status" style="background:#fee2e2; color:#991b1b;">❌ Exam Expired / Missed</div>
+          <button class="btn btn-outline" style="width:100%; padding:7px; font-size:12px; cursor:not-allowed; opacity:0.6;" disabled>🔒 Locked (Cannot Attempt)</button>
+        `;
+      }
+    } else if (d === currentDayNum) {
+      // TODAY'S EXAM
+      card.className = "day-card today";
+      if (isSubmitted) {
+        presentCount++;
+        card.innerHTML = `
+          <div>
+            <div class="day-head"><span>Day ${d} (Today)</span><span style="color:var(--success);">✓ Completed</span></div>
+            <div class="day-date">${dayDateLabel}</div>
+          </div>
+          <div style="font-size:13px; font-weight:700; color:#166534;">Score: ${rec.scoreSummary.finalScore} / 120</div>
+          <button class="btn btn-save" style="width:100%; padding:7px; font-size:12px;" onclick="launchDayExam(${d})">🔍 View Result & Tricks</button>
+        `;
+      } else {
+        const inProg = rec && !rec.isExamSubmitted;
+        card.innerHTML = `
+          <div>
+            <div class="day-head"><span>Day ${d} (Today)</span><span style="color:var(--secondary);">🟢 LIVE</span></div>
+            <div class="day-date">${dayDateLabel}</div>
+          </div>
+          <div class="day-status" style="background:#dbeafe; color:#1e40af;">${inProg ? '⏳ In Progress' : '⚡ Ready to Attempt'}</div>
+          <button class="btn btn-primary" style="width:100%; padding:8px; font-size:12.5px;" onclick="launchDayExam(${d})">${inProg ? '▶️ Resume Today\'s Exam' : '🚀 Start Today\'s Exam'}</button>
+        `;
+      }
+    } else {
+      // FUTURE DAY (Locked until date arrives)
+      card.className = "day-card upcoming";
+      card.innerHTML = `
+        <div>
+          <div class="day-head"><span>Day ${d}</span><span>🔒 Upcoming</span></div>
+          <div class="day-date">${dayDateLabel}</div>
+        </div>
+        <div class="day-status" style="background:#e2e8f0; color:#475569;">Unlocks on ${dayDateLabel}</div>
+        <button class="btn btn-outline" style="width:100%; padding:7px; font-size:12px; cursor:not-allowed;" disabled>🔒 Upcoming</button>
+      `;
+    }
+
+    grid.appendChild(card);
+  }
+
+  document.getElementById("statPresentCount").innerText = presentCount;
+  document.getElementById("statMissedCount").innerText = missedCount;
+}
+
+// ============================================================================
+// 5. QUESTION GENERATOR & ULAT-FER (SHUFFLING) ENGINE FOR USERS 1-6
+// ============================================================================
+function seededRandom(seed) {
+  let x = Math.sin(seed++) * 10000;
+  return x - Math.floor(x);
+}
+
+function buildQuestionPaper(day, setNum) {
+  const paperSeed = (day * 100) + setNum;
+  const questions = [];
+  let qId = 1;
+
+  // MATHS (12)
+  for (let i = 1; i <= 12; i++) {
+    const type = (i + setNum) % 4;
+    if (type === 0) {
+      const loss = 10 + ((day + i) % 3) * 5;
+      const gain = 20 + ((setNum + i) % 3) * 5;
+      const cp = (5 + ((day + setNum + i) % 12)) * 100;
+      const sp1 = (cp * (100 - loss)) / 100;
+      const sp2 = (cp * (100 + gain)) / 100;
+      questions.push({
+        id: qId++, section: "Maths",
+        qHi: `यदि एक वस्तु को ₹${sp1} में बेचने पर ${loss}% की हानि होती है, तो ${gain}% का लाभ कमाने के लिए उसे किस मूल्य पर बेचा जाना चाहिए?`,
+        options: [`₹${sp2 - 50}`, `₹${sp2}`, `₹${cp}`, `₹${sp2 + 100}`],
+        ans: 1,
+        solution: `<b>Option B (₹${sp2}) Sahi hai:</b> ${loss}% हानि का मतलब वस्तु को ${100 - loss}% में बेचा गया। अतः ${100 - loss}% = ₹${sp1} => CP = ₹${cp}. अब ${gain}% लाभ के लिए ${100 + gain}% की वैल्यू = ₹${sp2}.`,
+        shortTrick: `<b>🚀 Coaching Value Trick:</b><br>Rule: (Target % / Given %) × Given Value<br>👉 (${100 + gain} / ${100 - loss}) × ${sp1} = ₹${sp2}.`
+      });
+    } else if (type === 1) {
+      const p = (2 + ((day + i) % 8)) * 1000;
+      const r = 10;
+      const diff = (p * r * r) / 10000;
+      questions.push({
+        id: qId++, section: "Maths",
+        qHi: `₹${p} की धनराशि पर ${r}% वार्षिक दर से 2 वर्ष के चक्रवृद्धि ब्याज (CI) और साधारण ब्याज (SI) का अंतर क्या होगा?`,
+        options: [`₹${diff / 2}`, `₹${diff}`, `₹${diff * 2}`, `₹${diff + 25}`],
+        ans: 1,
+        solution: `<b>Option B (₹${diff}) Sahi hai:</b> 2 साल का SI = 20% और CI = 21% होता है। अंतर = 1% = ₹${diff}.`,
+        shortTrick: `<b>🚀 2-Year CI-SI Difference Trick:</b><br>Rule: Diff = P × (R/100)²<br>👉 ${p} × (10/100)² = ₹${diff}.`
+      });
+    } else if (type === 2) {
+      const a = 3 + ((day + setNum + i) % 7);
+      const val = a * a - 2;
+      questions.push({
+        id: qId++, section: "Maths",
+        qHi: `यदि x + 1/x = ${a} है, तो x² + 1/x² का मान क्या होगा?`,
+        options: [`${a * a}`, `${val}`, `${a * a + 2}`, `${val - 2}`],
+        ans: 1,
+        solution: `<b>Option B (${val}) Sahi hai:</b> दोनों तरफ वर्ग करने पर: ${a}² - 2 = ${val}.`,
+        shortTrick: `<b>🚀 Algebra Trick:</b><br>Rule: यदि x + 1/x = a, तो x² + 1/x² = a² - 2 => ${a}² - 2 = ${val}.`
+      });
+    } else {
+      const avg = 21 + ((day + setNum + i) * 2) % 30;
+      const smallest = avg - 4;
+      questions.push({
+        id: qId++, section: "Maths",
+        qHi: `5 क्रमागत विषम संख्याओं का औसत ${avg} है। सबसे छोटी संख्या ज्ञात करें।`,
+        options: [`${smallest - 2}`, `${smallest}`, `${avg - 2}`, `${avg + 4}`],
+        ans: 1,
+        solution: `<b>Option B (${smallest}) Sahi hai:</b> औसत बीच वाली संख्या (${avg}) होती है, इसलिए सबसे छोटी संख्या ${smallest} होगी।`,
+        shortTrick: `<b>🚀 Direct Average Trick:</b><br>Rule: Smallest Odd = Average - (n - 1) => ${avg} - 4 = ${smallest}.`
+      });
+    }
+  }
+
+  // REASONING (12)
+  for (let i = 1; i <= 12; i++) {
+    const type = (i + setNum) % 3;
+    if (type === 0) {
+      const startN = (day + setNum + i) % 5 + 1;
+      const s1 = startN * startN + startN;
+      const s2 = (startN + 1) * (startN + 1) + (startN + 1);
+      const s3 = (startN + 2) * (startN + 2) + (startN + 2);
+      const s4 = (startN + 3) * (startN + 3) + (startN + 3);
+      const ansVal = (startN + 4) * (startN + 4) + (startN + 4);
+      questions.push({
+        id: qId++, section: "Reasoning",
+        qHi: `दी गई शृंखला में अगला पद क्या होगा? ${s1}, ${s2}, ${s3}, ${s4}, ?`,
+        options: [`${ansVal - 2}`, `${ansVal}`, `${ansVal + 4}`, `${ansVal - 4}`],
+        ans: 1,
+        solution: `<b>Option B (${ansVal}) Sahi hai:</b> अंतर लगातार +2 से बढ़ रहा है।`,
+        shortTrick: `<b>🚀 (n² + n) Pattern Trick:</b><br>👉 (${startN + 4})² + (${startN + 4}) = ${ansVal}.`
+      });
+    } else if (type === 1) {
+      const h = ((day + i + setNum) % 11) + 1;
+      const m = 20;
+      const angle = Math.abs(30 * h - 5.5 * m);
+      questions.push({
+        id: qId++, section: "Reasoning",
+        qHi: `${h} बजकर ${m} मिनट (${h}:${m}) पर घड़ी की सुइयों के बीच कितने डिग्री का कोण बनेगा?`,
+        options: [`${Math.abs(angle - 10)}°`, `${angle}°`, `${angle + 15}°`, `${angle + 5}°`],
+        ans: 1,
+        solution: `<b>Option B (${angle}°) Sahi hai:</b> सूत्र |30H - 5.5M| के अनुसार कोण ${angle}° बनेगा।`,
+        shortTrick: `<b>🚀 Clock Formula:</b><br>👉 |30×${h} - 5.5×${m}| = ${angle}°.`
+      });
+    } else {
+      const sqBase = 11 + ((day + i + setNum) % 8);
+      const oddVal = sqBase * sqBase + 5;
+      questions.push({
+        id: qId++, section: "Reasoning",
+        qHi: `विषम संख्या का चयन करें (Odd one out):`,
+        options: [`${(sqBase - 2) * (sqBase - 2)}`, `${(sqBase - 1) * (sqBase - 1)}`, `${sqBase * sqBase}`, `${oddVal}`],
+        ans: 3,
+        solution: `<b>Option D (${oddVal}) Sahi hai:</b> बाकी तीनों पूर्ण वर्ग संख्याएँ हैं।`,
+        shortTrick: `<b>🚀 Square Check Trick:</b><br>👉 ${oddVal} किसी भी संख्या का वर्ग नहीं है।`
+      });
+    }
+  }
+
+  // SCIENCE (10)
+  const sciPool = [
+    { q: "मनुष्य के एक कान में कितनी हड्डियाँ होती हैं?", opts: ["2", "3", "4", "6"], a: 1, sol: "एक मध्य कान में 3 हड्डियाँ होती हैं: Malleus, Incus, Stapes.", tr: "Memory Hook: 'MIS' = 3 हड्डियाँ।" },
+    { q: "कौन-सी गैस 'लाफिंग गैस' के नाम से जानी जाती है?", opts: ["नाइट्रस ऑक्साइड (N2O)", "नाइट्रिक ऑक्साइड (NO)", "कार्बन मोनोऑक्साइड", "अमोनिया"], a: 0, sol: "N2O को हंसाने वाली गैस कहते हैं।", tr: "हँसते समय 'NO-NO' (N2O) करते हैं।" },
+    { q: "प्रकाश वर्ष (Light Year) किसकी इकाई है?", opts: ["समय", "खगोलीय दूरी", "प्रकाश की तीव्रता", "द्रव्यमान"], a: 1, sol: "प्रकाश द्वारा 1 वर्ष में तय की गई दूरी।", tr: "यह तारों के बीच की 'दूरी' नापने की इकाई है।" },
+    { q: "नींबू और संतरे में कौन-सा अम्ल पाया जाता है?", opts: ["एसिटिक अम्ल", "लैक्टिक अम्ल", "साइट्रिक अम्ल", "फॉर्मिक अम्ल"], a: 2, sol: "खट्टे फलों में साइट्रिक अम्ल होता है।", tr: "Citrus Fruits = Citric Acid." },
+    { q: "विद्युत धारा को मापने वाले यंत्र को क्या कहते हैं?", opts: ["वोल्टमीटर", "गैल्वेनोमीटर", "अमीटर", "बैरोमीटर"], a: 2, sol: "विद्युत धारा को अमीटर से मापते हैं।", tr: "Ampere = Ammeter." },
+    { q: "लाल रक्त कोशिकाओं (RBC) का जीवनकाल कितना होता है?", opts: ["60 दिन", "90 दिन", "120 दिन", "150 दिन"], a: 2, sol: "RBC का जीवनकाल 120 दिन होता है।", tr: "4 महीने = 120 दिन।" },
+    { q: "सूर्य की ऊर्जा का मुख्य स्रोत क्या है?", opts: ["नाभिकीय विखंडन", "नाभिकीय संलयन", "रासायनिक दहन", "गुरुत्वाकर्षण"], a: 1, sol: "हाइड्रोजन का हीलियम में संलयन।", tr: "Fusion (संलयन) = जुड़ना।" },
+    { q: "विटामिन A की कमी से कौन-सा रोग होता है?", opts: ["स्कर्वी", "बेरी-बेरी", "रतौंधी", "रिकेट्स"], a: 2, sol: "विटामिन A की कमी से रतौंधी होती है।", tr: "A = आँख (रतौंधी)।" },
+    { q: "कोशिका का 'पावरहाउस' किसे कहा जाता है?", opts: ["राइबोसोम", "नाभिक", "माइटोकॉन्ड्रिया", "लाइसोसोम"], a: 2, sol: "माइटोकॉन्ड्रिया में ATP ऊर्जा बनती है।", tr: "Mighty = Power = Mitochondria." },
+    { q: "कौन-सी धातु कमरे के तापमान पर तरल रहती है?", opts: ["सोना", "पारा (Mercury)", "सोडियम", "लोहा"], a: 1, sol: "पारा (Hg) कमरे के तापमान पर द्रव अवस्था में रहता है।", tr: "थर्मामीटर वाला पारा (Mercury)।" }
+  ];
+  for (let i = 0; i < 10; i++) {
+    const item = sciPool[(day + setNum * 3 + i) % sciPool.length];
+    questions.push({
+      id: qId++, section: "Science",
+      qHi: item.q, options: item.opts, ans: item.a,
+      solution: `<b>Sahi Jawab (${item.opts[item.a]}):</b> ${item.sol}`,
+      shortTrick: `<b>🚀 Science Memory Hook:</b><br>👉 ${item.tr}`
+    });
+  }
+
+  // ENGLISH (10)
+  const engPool = [
+    { q: "Find the error: 'He is (A) / one of the best student (B) / in the class. (C) / No error (D)'", opts: ["A", "B", "C", "D"], a: 1, sol: "'One of the' के बाद Plural Noun ('students') आता है।", tr: "One of the + Plural Noun." },
+    { q: "Fill in the blank: 'I prefer tea _____ coffee.'", opts: ["than", "to", "over", "from"], a: 1, sol: "'Prefer' के साथ हमेशा 'to' लगता है।", tr: "Prefer / Senior / Junior + to." },
+    { q: "Select the SYNONYM of 'ABUNDANT':", opts: ["Scarce", "Plentiful", "Brief", "Rare"], a: 1, sol: "Abundant का अर्थ प्रचुर (Plentiful) होता है।", tr: "A-Bun-Dance = Plentiful." },
+    { q: "Find the error: 'Each of the boys (A) / have a pen (B) / in his bag. (C) / No error (D)'", opts: ["A", "B", "C", "D"], a: 1, sol: "'Each of' के साथ Singular Verb ('has') लगती है।", tr: "Each / Every + Singular Verb." },
+    { q: "Idiom meaning: 'Once in a blue moon'", opts: ["Very often", "Rarely", "Always", "Never"], a: 1, sol: "कभी-कभार होने वाली घटना (Rarely)।", tr: "Blue moon = Rarely." },
+    { q: "Change to Passive Voice: 'They are building a house.'", opts: ["A house is built by them.", "A house is being built by them.", "A house was being built by them.", "A house has been built by them."], a: 1, sol: "Present Continuous का Passive 'is being + V3' होता है।", tr: "Active '-ing' = Passive 'being'." },
+    { q: "Choose the correct spelling:", opts: ["Accomodation", "Accommodation", "Acommodation", "Acomodation"], a: 1, sol: "Accommodation में डबल C और डबल M आते हैं।", tr: "Double C + Double M." },
+    { q: "Fill in the blank: 'He is addicted _____ smoking.'", opts: ["with", "to", "for", "in"], a: 1, sol: "'Addicted' के साथ 'to' लगता है।", tr: "Fixed Preposition: Addicted to." },
+    { q: "Select the SYNONYM of 'LUCID':", opts: ["Confusing", "Clear", "Dark", "Hidden"], a: 1, sol: "Lucid का अर्थ स्पष्ट (Clear) होता है।", tr: "Lucid = Clear." },
+    { q: "One word substitution: 'A person who does not believe in God'", opts: ["Theist", "Atheist", "Fanatic", "Ascetic"], a: 1, sol: "नास्तिक को Atheist कहते हैं।", tr: "A + Theist = Atheist." }
+  ];
+  for (let i = 0; i < 10; i++) {
+    const item = engPool[(day + setNum * 2 + i) % engPool.length];
+    questions.push({
+      id: qId++, section: "English",
+      qHi: item.q, options: item.opts, ans: item.a,
+      solution: `<b>Option (${item.opts[item.a]}) Sahi hai:</b> ${item.sol}`,
+      shortTrick: `<b>🚀 English Grammar Trick:</b><br>👉 ${item.tr}`
+    });
+  }
+
+  // HINDI (10)
+  const hinPool = [
+    { q: "'विद्यार्थी' शब्द में कौन-सी संधि है?", opts: ["दीर्घ संधि", "गुण संधि", "यण संधि", "अयादि संधि"], a: 0, sol: "विद्या + अर्थी = विद्यार्थी (दीर्घ संधि)।", tr: "बीच में बड़ी मात्रा (आ) = दीर्घ संधि।" },
+    { q: "'लंबोदर' में कौन-सा समास है?", opts: ["तत्पुरुष", "द्विगु", "कर्मधारय", "बहुव्रीहि"], a: 3, sol: "लंबा है उदर जिसका (गणेश जी) = बहुव्रीहि।", tr: "देवताओं के नाम = बहुव्रीहि समास।" },
+    { q: "शुद्ध वर्तनी का चयन करें:", opts: ["कवियत्री", "कवयित्री", "कवियित्री", "कवीत्री"], a: 1, sol: "सही वर्तनी 'कवयित्री' है।", tr: "क-व-यि-त्री।" },
+    { q: "'आकाश' का विलोम शब्द क्या है?", opts: ["धरती", "पाताल", "अंबर", "गगन"], a: 1, sol: "आकाश का विलोम पाताल है।", tr: "आकाश <-> पाताल।" },
+    { q: "'जो सब कुछ जानता हो' - एक शब्द:", opts: ["अज्ञ", "सुज्ञ", "सर्वज्ञ", "अल्पज्ञ"], a: 2, sol: "सब कुछ जानने वाला = सर्वज्ञ।", tr: "सर्व + ज्ञ = सर्वज्ञ।" },
+    { q: "'पवन' शब्द में कौन-सी संधि है?", opts: ["दीर्घ संधि", "गुण संधि", "यण संधि", "अयादि संधि"], a: 3, sol: "पो + अन = पवन (अयादि संधि)।", tr: "3 साधारण अक्षर (पवन, नयन) = अयादि।" },
+    { q: "'कमल' का पर्यायवाची शब्द है:", opts: ["जलद", "जलज", "पयोद", "वारिद"], a: 1, sol: "जलज = जल में जन्म लेने वाला (कमल)।", tr: "अंत में 'ज' = कमल, 'द' = बादल।" },
+    { q: "'आसमान से गिरा खजूर में अटका' का अर्थ है:", opts: ["ऊँचाई से गिरना", "एक विपत्ति से छूटकर दूसरी में फँसना", "काम अधूरा रहना", "पेड़ पर चढ़ना"], a: 1, sol: "एक मुसीबत से निकलकर दूसरी में फँसना।", tr: "मुहावरे का भावार्थ देखा जाता है।" },
+    { q: "शुद्ध वर्तनी का चयन करें:", opts: ["आशीर्बाद", "आर्शीवाद", "आशीर्वाद", "अशीर्वाद"], a: 2, sol: "सही वर्तनी 'आशीर्वाद' है।", tr: "रेफ 'वा' के ऊपर लगेगा।" },
+    { q: "'दिन' और 'दीन' का सही अर्थ है:", opts: ["दिवस - गरीब", "गरीब - दिवस", "सुबह - शाम", "रात्रि - गरीब"], a: 0, sol: "दिन = दिवस, दीन = गरीब।", tr: "दीन (बड़ी मात्रा) = गरीब।" }
+  ];
+  for (let i = 0; i < 10; i++) {
+    const item = hinPool[(day + setNum * 3 + i) % hinPool.length];
+    questions.push({
+      id: qId++, section: "Hindi",
+      qHi: item.q, options: item.opts, ans: item.a,
+      solution: `<b>Option (${item.opts[item.a]}) Sahi hai:</b> ${item.sol}`,
+      shortTrick: `<b>🚀 Hindi Trick:</b><br>👉 ${item.tr}`
+    });
+  }
+
+  // COMP/MISC (6)
+  const compPool = [
+    { q: "कंप्यूटर में 'Ctrl + C' और 'Ctrl + V' का क्या उपयोग है?", opts: ["Cut और Paste", "Copy और Paste", "Undo और Redo", "Save और Print"], a: 1, sol: "Copy और Paste.", tr: "C = Copy, V = Paste." },
+    { q: "1 Gigabyte (GB) में कितने Megabyte (MB) होते हैं?", opts: ["1000 MB", "1024 MB", "1048 MB", "512 MB"], a: 1, sol: "1 GB = 1024 MB.", tr: "1024 का गुणक।" },
+    { q: "वेबसाइट को सुरक्षित दर्शाने के लिए URL में क्या होता है?", opts: ["http://", "ftp://", "https://", "www://"], a: 2, sol: "https:// (S = Secure).", tr: "S for Secure." },
+    { q: "पाई चार्ट में 25% हिस्सा केंद्र पर कितने डिग्री का कोण बनाएगा?", opts: ["90°", "60°", "45°", "120°"], a: 0, sol: "360° का 1/4 = 90°.", tr: "25% = 90°." },
+    { q: "1 Byte में कितने Bit होते हैं?", opts: ["4", "8", "16", "32"], a: 1, sol: "1 Byte = 8 Bits.", tr: "8 Bits = 1 Byte." },
+    { q: "रेलवे में 'Tatkal' टिकट बुकिंग यात्रा से कितने दिन पूर्व खुलती है?", opts: ["2 दिन", "1 दिन (24 घंटे पूर्व)", "3 दिन", "समान दिन"], a: 1, sol: "यात्रा से 1 दिन पूर्व।", tr: "तत्काल = 1 दिन पहले।" }
+  ];
+  for (let i = 0; i < 6; i++) {
+    const item = compPool[(day + setNum + i) % compPool.length];
+    questions.push({
+      id: qId++, section: "Comp/Misc",
+      qHi: item.q, options: item.opts, ans: item.a,
+      solution: `<b>Option (${item.opts[item.a]}) Sahi hai:</b> ${item.sol}`,
+      shortTrick: `<b>🚀 Smart Trick:</b><br>👉 ${item.tr}`
+    });
+  }
+
+  return questions;
+}
+
+function shuffleQuestionsForSlot(questionsArray, day, slotNum) {
+  const copy = [...questionsArray];
+  if (slotNum <= 3) return copy;
+  let seed = (day * 1000) + (slotNum * 97);
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(seededRandom(seed++) * (i + 1));
+    const temp = copy[i];
+    copy[i] = copy[j];
+    copy[j] = temp;
+  }
+  return copy;
+}
+
+// ============================================================================
+// 6. EXAM EXECUTION, REAL-TIME RESUME & PERMANENT RESULT STORAGE
+// ============================================================================
+const POS_MARK = 2.0;
+const NEG_MARK = 0.5;
+const CHEAT_DEDUCTION_PER_COUNT = 2.0;
+const MIN_ATTEMPTS = 40;
+const MIN_TIME_SECONDS = 40 * 60;
+
+let examData = [];
+let currentIdx = 0;
+let userAnswers = {};
+let questionStatus = {};
+let timeSpent = {};
+let questionEnterTime = Date.now();
+
+let cheatCount = 0;
+let lastCheatTime = 0;
+let examStartTime = null;
+let timerSeconds = 60 * 60;
+let timerInterval = null;
+let isExamSubmitted = false;
+let submittedAt = null;
+let reviewMode = false;
+
+function launchDayExam(dayNum) {
+  const todayStr = getTodayDateString();
+  const currentDayNum = calculateDayNumber(currentUserProfile.joinDate, todayStr);
+  const existingRec = currentUserProfile.daysRecord[dayNum];
+
+  // Enforce strict Missed Exam rule
+  if (dayNum < currentDayNum && (!existingRec || !existingRec.isExamSubmitted)) {
+    alert("❌ Yeh exam miss ho chuka hai! Niyam ke anusaar missed exam dobara attempt nahi kiya ja sakta.");
+    return;
+  }
+  if (dayNum > currentDayNum) {
+    alert("🔒 Yeh upcoming exam hai, apni tarikh par hi unlock hoga.");
+    return;
+  }
+
+  activeDay = dayNum;
+  const baseQs = buildQuestionPaper(activeDay, activeSetNum);
+  examData = shuffleQuestionsForSlot(baseQs, activeDay, activeUserSlot);
+
+  const setChar = String.fromCharCode(64 + activeSetNum);
+  document.getElementById("examHeaderTitle").innerText = `Day ${activeDay} (1 Hour Exam) — Set ${setChar}`;
+  document.getElementById("activeUserBadge").innerText = `📱 ${currentPhone} | Day ${activeDay}`;
+  document.getElementById("portalOverlay").style.display = "none";
+
+  if (timerInterval) clearInterval(timerInterval);
+
+  if (existingRec) {
+    examStartTime = existingRec.examStartTime;
+    userAnswers = existingRec.userAnswers || {};
+    questionStatus = existingRec.questionStatus || {};
+    timeSpent = existingRec.timeSpent || {};
+    cheatCount = existingRec.cheatCount || 0;
+    currentIdx = existingRec.currentIdx || 0;
+    isExamSubmitted = !!existingRec.isExamSubmitted;
+    submittedAt = existingRec.submittedAt || null;
+
+    if (isExamSubmitted) {
+      reviewMode = false;
+      restoreActionFooterForExam();
+      renderSectionTabs();
+      renderQuestion(currentIdx);
+      renderPalette();
+      showScorecardModal(existingRec.scoreSummary);
+      return;
+    } else {
+      reviewMode = false;
+      restoreActionFooterForExam();
+      let elapsedSeconds = Math.floor((Date.now() - examStartTime) / 1000);
+      timerSeconds = (60 * 60) - elapsedSeconds;
+      if (timerSeconds <= 0) timerSeconds = 0;
+    }
+  } else {
+    examStartTime = Date.now();
+    userAnswers = {};
+    questionStatus = {};
+    timeSpent = {};
+    cheatCount = 0;
+    currentIdx = 0;
+    isExamSubmitted = false;
+    submittedAt = null;
+    reviewMode = false;
+    timerSeconds = 60 * 60;
+
+    examData.forEach(q => {
+      questionStatus[q.id] = 'not-visited';
+      timeSpent[q.id] = 0;
+    });
+    questionStatus[examData[0].id] = 'not-answered';
+    restoreActionFooterForExam();
+    saveExamState();
+  }
+
+  renderSectionTabs();
+  renderQuestion(currentIdx);
+  renderPalette();
+  startTimer();
+  checkSubmitCondition();
+}
+
+function restoreActionFooterForExam() {
+  document.getElementById("submitBtn").style.display = "block";
+  document.getElementById("submitUnlockMsg").style.display = "block";
+  document.getElementById("actionFooter").innerHTML = `
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-mark" onclick="markForReview()">Mark for Review & Next</button>
+      <button class="btn btn-outline" onclick="clearResponse()">Clear Response</button>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-outline" id="prevBtn" onclick="navigateQuestion(-1)">Previous</button>
+      <button class="btn btn-save" onclick="saveAndNext()">Save & Next</button>
+    </div>
+  `;
+}
+
+function saveExamState(scoreSummaryObj = null) {
+  if (!currentUserProfile) return;
+  const existingRec = currentUserProfile.daysRecord[activeDay];
+  const prevSummary = existingRec ? existingRec.scoreSummary : null;
+
+  currentUserProfile.daysRecord[activeDay] = {
+    examStartTime: examStartTime,
+    userAnswers: userAnswers,
+    questionStatus: questionStatus,
+    timeSpent: timeSpent,
+    cheatCount: cheatCount,
+    currentIdx: currentIdx,
+    isExamSubmitted: isExamSubmitted,
+    submittedAt: submittedAt,
+    scoreSummary: scoreSummaryObj || prevSummary
+  };
+  syncUserToCloud(currentPhone, currentUserProfile);
+}
+
+function returnToPortal() {
+  recordQuestionTime();
+  if (timerInterval) clearInterval(timerInterval);
+  document.getElementById("resultModal").style.display = "none";
+  renderAttendanceDashboard();
+  document.getElementById("portalOverlay").style.display = "flex";
+}
+
+function recordQuestionTime() {
+  if (reviewMode || isExamSubmitted || !examData.length) return;
+  const q = examData[currentIdx];
+  if (!q) return;
+  const timeNow = Date.now();
+  const secondsSpent = Math.floor((timeNow - questionEnterTime) / 1000);
+  if (secondsSpent > 0) {
+    timeSpent[q.id] = (timeSpent[q.id] || 0) + secondsSpent;
+  }
+  questionEnterTime = timeNow;
+  saveExamState();
+}
+
+function renderSectionTabs() {
+  const container = document.getElementById("sectionTabs");
+  container.innerHTML = "";
+  const sectionsList = [...new Set(examData.map(q => q.section))];
+  sectionsList.forEach(sec => {
+    const btn = document.createElement("button");
+    btn.className = "sec-tab";
+    btn.innerText = sec;
+    btn.onclick = () => jumpToSection(sec);
+    container.appendChild(btn);
+  });
+  updateActiveTab();
+}
+
+function updateActiveTab() {
+  if (!examData[currentIdx]) return;
+  const currentSec = examData[currentIdx].section;
+  document.querySelectorAll(".sec-tab").forEach(tab => {
+    if (tab.innerText === currentSec) tab.classList.add("active");
+    else tab.classList.remove("active");
+  });
+}
+
+function jumpToSection(secName) {
+  recordQuestionTime();
+  const targetIdx = examData.findIndex(q => q.section === secName);
+  if (targetIdx !== -1) {
+    if (!reviewMode) saveCurrentStatus();
+    currentIdx = targetIdx;
+    if (!reviewMode && questionStatus[examData[currentIdx].id] === 'not-visited') {
+      questionStatus[examData[currentIdx].id] = 'not-answered';
+    }
+    renderQuestion(currentIdx);
+    renderPalette();
+    saveExamState();
+  }
+}
+
+function renderQuestion(idx) {
+  const q = examData[idx];
+  const origTag = activeUserSlot > 3 ? ` [Shuffled Base Q#${q.id}]` : ``;
+  document.getElementById("qNumberText").innerText = `Q${idx + 1}. (${q.section})${origTag}`;
+  document.getElementById("qBody").innerHTML = `<strong>${q.qHi}</strong>`;
+
+  // TRIGGER NEW GOOGLE AD ON EVERY QUESTION CHANGE
+  refreshGoogleAdOnQuestionChange(idx + 1);
+
+  const optsBox = document.getElementById("optionsBox");
+  optsBox.innerHTML = "";
+  const savedAns = userAnswers[q.id];
+
+  q.options.forEach((opt, oIdx) => {
+    const isChecked = savedAns === oIdx;
+    let extraStyle = '';
+    let icon = '';
+
+    if (reviewMode) {
+      if (oIdx === q.ans) {
+        extraStyle = 'background:#dcfce7; border-color:#22c55e; font-weight:bold;';
+        icon = '✅ (Correct Answer)';
+      } else if (isChecked && oIdx !== q.ans) {
+        extraStyle = 'background:#fee2e2; border-color:#ef4444;';
+        icon = '❌ (Your Answer)';
+      }
+    }
+
+    const label = document.createElement("label");
+    label.className = `option-label ${isChecked && !reviewMode ? 'selected' : ''}`;
+    if (extraStyle) label.setAttribute("style", extraStyle);
+
+    label.innerHTML = `
+      <input type="radio" name="q_opt" value="${oIdx}" ${isChecked ? 'checked' : ''} 
+             ${reviewMode ? 'disabled' : ''} onchange="selectOption(${q.id}, ${oIdx})">
+      <span><strong>(${String.fromCharCode(65 + oIdx)})</strong> ${opt} <em>${icon}</em></span>
+    `;
+    optsBox.appendChild(label);
+  });
+
+  const revContainer = document.getElementById("reviewContainer");
+  if (reviewMode) {
+    revContainer.innerHTML = `
+      <div class="time-tracker-box">
+        ⏳ <span><strong>Time Spent on Question:</strong> ${timeSpent[q.id] || 0} seconds</span>
+      </div>
+      <div class="review-box">
+        <strong>💡 Detailed Option Logic:</strong><br><br>${q.solution}
+      </div>
+      <div class="trick-box">
+        ${q.shortTrick}
+      </div>
+    `;
+  } else {
+    revContainer.innerHTML = "";
+  }
+
+  const prevBtn = document.getElementById("prevBtn");
+  if (prevBtn) prevBtn.disabled = (idx === 0);
+  updateActiveTab();
+
+  if (!reviewMode && !isExamSubmitted) {
+    questionEnterTime = Date.now();
+  }
+}
+
+function selectOption(qId, optIdx) {
+  if (reviewMode || isExamSubmitted) return;
+  userAnswers[qId] = optIdx;
+  document.querySelectorAll(".option-label").forEach((el, idx) => {
+    if (idx === optIdx) el.classList.add("selected");
+    else el.classList.remove("selected");
+  });
+  checkSubmitCondition();
+  saveExamState();
+}
+
+function saveCurrentStatus() {
+  if (reviewMode || isExamSubmitted) return;
+  const q = examData[currentIdx];
+  if (userAnswers[q.id] !== undefined) {
+    if (questionStatus[q.id] !== 'marked-answered') questionStatus[q.id] = 'answered';
+  } else {
+    if (questionStatus[q.id] !== 'marked') questionStatus[q.id] = 'not-answered';
+  }
+}
+
+function saveAndNext() {
+  if (reviewMode) { navigateQuestion(1); return; }
+  recordQuestionTime();
+  const q = examData[currentIdx];
+  questionStatus[q.id] = (userAnswers[q.id] !== undefined) ? 'answered' : 'not-answered';
+  navigateQuestion(1);
+}
+
+function markForReview() {
+  if (reviewMode || isExamSubmitted) return;
+  recordQuestionTime();
+  const q = examData[currentIdx];
+  questionStatus[q.id] = (userAnswers[q.id] !== undefined) ? 'marked-answered' : 'marked';
+  navigateQuestion(1);
+}
+
+function clearResponse() {
+  if (reviewMode || isExamSubmitted) return;
+  const q = examData[currentIdx];
+  delete userAnswers[q.id];
+  questionStatus[q.id] = 'not-answered';
+  renderQuestion(currentIdx);
+  renderPalette();
+  checkSubmitCondition();
+  saveExamState();
+}
+
+function navigateQuestion(step) {
+  if (!reviewMode) saveCurrentStatus();
+  const nextIdx = currentIdx + step;
+  if (nextIdx >= 0 && nextIdx < examData.length) {
+    currentIdx = nextIdx;
+    if (!reviewMode && questionStatus[examData[nextIdx].id] === 'not-visited') {
+      questionStatus[examData[nextIdx].id] = 'not-answered';
+    }
+    renderQuestion(currentIdx);
+    renderPalette();
+    saveExamState();
+  } else if (!reviewMode && step > 0) {
+    alert("Yeh aakhiri question hai.");
+  }
+}
+
+function jumpToQuestion(idx) {
+  recordQuestionTime();
+  if (!reviewMode) saveCurrentStatus();
+  currentIdx = idx;
+  if (!reviewMode && questionStatus[examData[idx].id] === 'not-visited') {
+    questionStatus[examData[idx].id] = 'not-answered';
+  }
+  renderQuestion(currentIdx);
+  renderPalette();
+  saveExamState();
+}
+
+function renderPalette() {
+  const grid = document.getElementById("paletteGrid");
+  grid.innerHTML = "";
+  examData.forEach((q, idx) => {
+    const btn = document.createElement("button");
+    if (reviewMode) {
+      const uAns = userAnswers[q.id];
+      if (uAns === q.ans) btn.className = 'pal-btn answered';
+      else if (uAns !== undefined) btn.className = 'pal-btn not-answered';
+      else btn.className = 'pal-btn b-not-visited';
+    } else {
+      btn.className = `pal-btn ${questionStatus[q.id]}`;
+    }
+    if (idx === currentIdx) btn.classList.add("current");
+    btn.innerText = idx + 1;
+    btn.onclick = () => jumpToQuestion(idx);
+    grid.appendChild(btn);
+  });
+}
+
+function checkSubmitCondition() {
+  const msg = document.getElementById("submitUnlockMsg");
+  const btn = document.getElementById("submitBtn");
+  if (reviewMode || isExamSubmitted) {
+    msg.style.display = "none";
+    return;
+  }
+
+  let attempted = Object.keys(userAnswers).length;
+  let timeSpentTotal = (60 * 60) - timerSeconds;
+
+  let qLeft = Math.max(0, MIN_ATTEMPTS - attempted);
+  let tLeft = Math.max(0, MIN_TIME_SECONDS - timeSpentTotal);
+  let mLeft = Math.ceil(tLeft / 60);
+
+  if (attempted >= MIN_ATTEMPTS && timeSpentTotal >= MIN_TIME_SECONDS) {
+    btn.disabled = false;
+    btn.style.background = "var(--danger)";
+    btn.style.cursor = "pointer";
+    btn.style.opacity = "1";
+    msg.style.background = "#dcfce7";
+    msg.style.borderColor = "#86efac";
+    msg.style.color = "#166534";
+    msg.innerHTML = "✅ <b>Submit Unlocked!</b><br>Aap final submit kar sakte hain.";
+  } else {
+    btn.disabled = true;
+    btn.style.background = "#94a3b8";
+    btn.style.cursor = "not-allowed";
+    btn.style.opacity = "0.7";
+    msg.style.background = "#fee2e2";
+    msg.style.borderColor = "#fca5a5";
+    msg.style.color = "#991b1b";
+
+    let text = "🔒 <b>Submit Locked:</b><br>";
+    if (mLeft > 0) text += mLeft + " Min aur bitayein";
+    if (mLeft > 0 && qLeft > 0) text += " &<br>";
+    if (qLeft > 0) text += qLeft + " Qs aur attempt karein";
+    msg.innerHTML = text;
+  }
+}
+
+function setupSilentAntiCheat() {
+  function recordCheat() {
+    if (isExamSubmitted || reviewMode || document.getElementById("portalOverlay").style.display !== "none") return;
+    const now = Date.now();
+    if (now - lastCheatTime > 2000) {
+      cheatCount++;
+      lastCheatTime = now;
+      saveExamState();
+    }
+  }
+  window.addEventListener("blur", recordCheat);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) recordCheat();
+  });
+}
+
+function startTimer() {
+  const display = document.getElementById("timeDisplay");
+  const box = document.getElementById("timerBox");
+
+  timerInterval = setInterval(() => {
+    let elapsedSeconds = Math.floor((Date.now() - examStartTime) / 1000);
+    timerSeconds = (60 * 60) - elapsedSeconds;
+
+    if (timerSeconds <= 0) {
+      timerSeconds = 0;
+      display.innerText = "00:00:00";
+      clearInterval(timerInterval);
+      alert("Time Over! Exam automatically submit ho raha hai.");
+      submitExam();
+      return;
+    }
+
+    const h = Math.floor(timerSeconds / 3600);
+    const m = Math.floor((timerSeconds % 3600) / 60);
+    const s = timerSeconds % 60;
+    display.innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+    if (timerSeconds <= 300) box.classList.add("danger");
+    else box.classList.remove("danger");
+
+    checkSubmitCondition();
+  }, 1000);
+}
+
+function confirmSubmit() {
+  recordQuestionTime();
+  saveCurrentStatus();
+  const attempted = Object.keys(userAnswers).length;
+  if (confirm(`Kya aap final exam submit karna chahte hain?\nAttempted: ${attempted} / ${examData.length}`)) {
+    submitExam();
+  }
+}
+
+function submitExam() {
+  if (timerInterval) clearInterval(timerInterval);
+  recordQuestionTime();
+  isExamSubmitted = true;
+
+  const now = new Date();
+  submittedAt = now.toLocaleDateString('en-IN') + ' ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+  let correct = 0;
+  let wrong = 0;
+
+  examData.forEach(q => {
+    const ans = userAnswers[q.id];
+    if (ans !== undefined) {
+      if (ans === q.ans) correct++;
+      else wrong++;
+    }
+  });
+
+  let rawScore = (correct * POS_MARK) - (wrong * NEG_MARK);
+  let penalty = cheatCount * CHEAT_DEDUCTION_PER_COUNT;
+  let finalScore = (rawScore - penalty).toFixed(2);
+
+  const summary = {
+    correct: correct,
+    wrong: wrong,
+    attempted: correct + wrong,
+    penalty: penalty.toFixed(2),
+    finalScore: finalScore
+  };
+
+  saveExamState(summary);
+  checkSubmitCondition();
+  showScorecardModal(summary);
+}
+
+function showScorecardModal(summary) {
+  document.getElementById("scoreModalTitle").innerText = `Scorecard — Day ${activeDay} (+91-${currentPhone})`;
+  document.getElementById("corrCount").innerText = summary.correct;
+  document.getElementById("wrongCount").innerText = summary.wrong;
+  document.getElementById("finalScoreVal").innerText = summary.finalScore;
+  document.getElementById("submittedTimeLabel").innerText = `Net Final Score (Saved: ${submittedAt || 'Permanent Record'})`;
+
+  if (cheatCount > 0) {
+    document.getElementById("penaltyAlert").style.display = "block";
+    document.getElementById("cheatCountDisplay").innerText = cheatCount;
+    document.getElementById("penaltyMarksDisplay").innerText = summary.penalty;
+  } else {
+    document.getElementById("penaltyAlert").style.display = "none";
+  }
+
+  document.getElementById("resultModal").style.display = "flex";
+}
+
+function reviewQuestions() {
+  document.getElementById("resultModal").style.display = "none";
+  reviewMode = true;
+  document.getElementById("submitBtn").style.display = "none";
+  document.getElementById("submitUnlockMsg").style.display = "none";
+  document.getElementById("timeDisplay").innerText = "REVIEW";
+  document.getElementById("actionFooter").innerHTML = `
+    <button class="btn btn-outline" onclick="navigateQuestion(-1)">⬅️ Previous</button>
+    <div style="font-weight:bold; color:var(--secondary); font-size:14.5px;">🔍 REVIEW MODE (Day ${activeDay} | +91-${currentPhone})</div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-outline" onclick="document.getElementById('resultModal').style.display='flex'">📊 Scorecard</button>
+      <button class="btn btn-save" onclick="navigateQuestion(1)">Next ➡️</button>
+    </div>
+  `;
+  renderQuestion(currentIdx);
+  renderPalette();
+}
+
+window.onload = initPortal;
+</script>
+</body>
+</html>
